@@ -2024,7 +2024,7 @@ class ApplicationsController extends Controller
     )]
     public function update_env_by_uuid(Request $request)
     {
-        $allowedFields = ['key', 'value', 'is_preview', 'is_build_time', 'is_literal'];
+        $allowedFields = ['key', 'value', 'is_preview', 'is_build_time', 'is_literal', 'is_multiline', 'is_shown_once'];
         $teamId = getTeamIdFromToken();
 
         if (is_null($teamId)) {
@@ -2403,7 +2403,7 @@ class ApplicationsController extends Controller
     )]
     public function create_env(Request $request)
     {
-        $allowedFields = ['key', 'value', 'is_preview', 'is_build_time', 'is_literal'];
+        $allowedFields = ['key', 'value', 'is_preview', 'is_build_time', 'is_literal', 'is_multiline', 'is_shown_once'];
         $teamId = getTeamIdFromToken();
 
         if (is_null($teamId)) {

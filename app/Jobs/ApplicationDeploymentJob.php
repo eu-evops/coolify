@@ -1922,7 +1922,8 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 $volume_name = $persistentStorage->name;
             }
             if ($this->pull_request_id !== 0) {
-                $volume_name = $volume_name.'-pr-'.$this->pull_request_id;
+                // We don't want -pr- to be appended to the volume name as this causes issues with bind mounts
+                // $volume_name = $volume_name.'-pr-'.$this->pull_request_id;
             }
             $local_persistent_volumes[] = $volume_name.':'.$persistentStorage->mount_path;
         }
