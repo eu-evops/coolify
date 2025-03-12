@@ -77,7 +77,7 @@ class DeploymentFailed extends CustomEmailNotification
     {
         if ($this->preview) {
             $message = new DiscordMessage(
-                title: ':cross_mark: #{$this->application_name} - deployment failed',
+                title: ":cross_mark: {$this->application_name} - deployment failed",
                 description: 'Pull request: '.$this->preview->pull_request_id,
                 color: DiscordMessage::errorColor(),
                 isCritical: true,
@@ -137,10 +137,10 @@ class DeploymentFailed extends CustomEmailNotification
     public function toPushover(): PushoverMessage
     {
         if ($this->preview) {
-            $title = "#{$this->application_name} - pull request #{$this->preview->pull_request_id} deployment failed";
+            $title = "{$this->application_name} - pull request #{$this->preview->pull_request_id} deployment failed";
             $message = "Pull request deployment failed for {$this->application_name}";
         } else {
-            $title = '#{$this->application_name} - deployment failed';
+            $title = "{$this->application_name} - deployment failed";
             $message = "Deployment failed for {$this->application_name}";
         }
 
@@ -162,13 +162,13 @@ class DeploymentFailed extends CustomEmailNotification
     public function toSlack(): SlackMessage
     {
         if ($this->preview) {
-            $title = "#{$this->application_name} - pull request #{$this->preview->pull_request_id} deployment failed";
+            $title = "{$this->application_name} - pull request #{$this->preview->pull_request_id} deployment failed";
             $description = "Pull request deployment failed for {$this->application_name}";
             if ($this->preview->fqdn) {
                 $description .= "\nPreview URL: {$this->preview->fqdn}";
             }
         } else {
-            $title = '#{$this->application_name} - deployment failed';
+            $title = "{$this->application_name} - deployment failed";
             $description = "Deployment failed for {$this->application_name}";
             if ($this->fqdn) {
                 $description .= "\nApplication URL: {$this->fqdn}";
