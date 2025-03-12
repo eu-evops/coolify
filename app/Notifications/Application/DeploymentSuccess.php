@@ -77,7 +77,7 @@ class DeploymentSuccess extends CustomEmailNotification
     {
         if ($this->preview) {
             $message = new DiscordMessage(
-                title: ':white_check_mark: Preview deployment successful',
+                title: ':white_check_mark: #{$this->application_name} - preview deployment successful',
                 description: 'Pull request: '.$this->preview->pull_request_id,
                 color: DiscordMessage::successColor(),
             );
@@ -146,7 +146,7 @@ class DeploymentSuccess extends CustomEmailNotification
     public function toPushover(): PushoverMessage
     {
         if ($this->preview) {
-            $title = "Pull request #{$this->preview->pull_request_id} successfully deployed";
+            $title = "#{$this->application_name} - pull request #{$this->preview->pull_request_id} successfully deployed";
             $message = 'New PR'.$this->preview->pull_request_id.' version successfully deployed of '.$this->application_name.'';
             if ($this->preview->fqdn) {
                 $buttons[] = [
@@ -155,7 +155,7 @@ class DeploymentSuccess extends CustomEmailNotification
                 ];
             }
         } else {
-            $title = 'New version successfully deployed';
+            $title = '#{$this->application_name} - new version successfully deployed';
             $message = 'New version successfully deployed of '.$this->application_name.'';
             if ($this->fqdn) {
                 $buttons[] = [
@@ -182,13 +182,13 @@ class DeploymentSuccess extends CustomEmailNotification
     public function toSlack(): SlackMessage
     {
         if ($this->preview) {
-            $title = "Pull request #{$this->preview->pull_request_id} successfully deployed";
+            $title = "#{$this->application_name} - pull request #{$this->preview->pull_request_id} successfully deployed";
             $description = "New version successfully deployed for {$this->application_name}";
             if ($this->preview->fqdn) {
                 $description .= "\nPreview URL: {$this->preview->fqdn}";
             }
         } else {
-            $title = 'New version successfully deployed';
+            $title = '#{$this->application_name} - new version successfully deployed';
             $description = "New version successfully deployed for {$this->application_name}";
             if ($this->fqdn) {
                 $description .= "\nApplication URL: {$this->fqdn}";
