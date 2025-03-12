@@ -634,6 +634,7 @@ All notable changes to this project will be documented in this file.
 - *(database)* Add index to scheduled database backup executions
 - *(billing)* Add Stripe past due subscription status tracking
 - *(ui)* Add past due subscription warning banner
+- *(notifications)* Include application name in deployment success and failure message headers/titles
 
 ### 🐛 Bug Fixes
 
@@ -3600,6 +3601,7 @@ All notable changes to this project will be documented in this file.
 - Add TECH_STACK.md (#4883)
 - *(services)* Reword nitropage url and slogan
 - *(readme)* Add Convex to special sponsors section
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
