@@ -635,6 +635,7 @@ All notable changes to this project will be documented in this file.
 - *(billing)* Add Stripe past due subscription status tracking
 - *(ui)* Add past due subscription warning banner
 - *(notifications)* Include application name in deployment success and failure message headers/titles
+- *(deployment)* Add application name to preview deployment messages and fix build logs URL
 
 ### 🐛 Bug Fixes
 
@@ -2966,6 +2967,7 @@ All notable changes to this project will be documented in this file.
 - *(revert)* Label parsing
 - *(helpers)* Initialize command variable in parseCommandFromMagicEnvVariable
 - *(billing)* Restrict Stripe subscription status update to 'active' only
+- *(notifications)* Correct string interpolation in deployment success and failure titles
 
 ### 💼 Other
 
@@ -3601,6 +3603,7 @@ All notable changes to this project will be documented in this file.
 - Add TECH_STACK.md (#4883)
 - *(services)* Reword nitropage url and slogan
 - *(readme)* Add Convex to special sponsors section
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
