@@ -2689,6 +2689,80 @@
                 ]
             }
         },
+        "\/applications\/{uuid}\/prs\/{pr}\/logs": {
+            "get": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Get application logs for a PR.",
+                "description": "Get application logs for a PR by UUID.",
+                "operationId": "get-application-logs-for-pr-by-uuid",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of the application.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "pr",
+                        "in": "path",
+                        "description": "ID of the PR.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "lines",
+                        "in": "query",
+                        "description": "Number of lines to show from the end of the logs.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 100
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get application logs by UUID.",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "properties": {
+                                        "logs": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#\/components\/responses\/401"
+                    },
+                    "400": {
+                        "$ref": "#\/components\/responses\/400"
+                    },
+                    "404": {
+                        "$ref": "#\/components\/responses\/404"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "\/applications\/{uuid}\/envs": {
             "get": {
                 "tags": [
@@ -3124,6 +3198,14 @@
                             "type": "boolean",
                             "default": false
                         }
+                    },
+                    {
+                        "name": "pull_request_id",
+                        "in": "query",
+                        "description": "Pull request ID to deploy.",
+                        "schema": {
+                            "type": "int32"
+                        }
                     }
                 ],
                 "responses": {
@@ -3183,6 +3265,14 @@
                         "schema": {
                             "type": "string",
                             "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "pull_request_id",
+                        "in": "query",
+                        "description": "Pull request ID to deploy.",
+                        "schema": {
+                            "type": "int32"
                         }
                     }
                 ],
@@ -5068,6 +5158,16 @@
                             "type": "integer",
                             "default": 10,
                             "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "prNumber",
+                        "in": "query",
+                        "description": "Pull request number.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
                         }
                     }
                 ],

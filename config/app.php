@@ -189,6 +189,9 @@ return [
          */
         \SocialiteProviders\Manager\ServiceProvider::class,
 
+        // PlatformShape specific additions
+        App\Providers\PlatformShapeRouteServiceProvider::class,
+
         /*
          * Application Service Providers...
          */

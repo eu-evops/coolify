@@ -49,7 +49,8 @@ class DeployController extends Controller
                             items: new OA\Items(ref: '#/components/schemas/ApplicationDeploymentQueue'),
                         )
                     ),
-                ]),
+                ]
+            ),
             new OA\Response(
                 response: 401,
                 ref: '#/components/responses/401',
@@ -98,7 +99,8 @@ class DeployController extends Controller
                             ref: '#/components/schemas/ApplicationDeploymentQueue',
                         )
                     ),
-                ]),
+                ]
+            ),
             new OA\Response(
                 response: 401,
                 ref: '#/components/responses/401',
@@ -172,7 +174,8 @@ class DeployController extends Controller
                             ],
                         )
                     ),
-                ]),
+                ]
+            ),
             new OA\Response(
                 response: 401,
                 ref: '#/components/responses/401',
@@ -397,6 +400,16 @@ class DeployController extends Controller
                     default: 10,
                 )
             ),
+            new OA\Parameter(
+                name: 'prNumber',
+                in: 'query',
+                description: 'Pull request number.',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'integer',
+                    minimum: 0,
+                )
+            ),
         ],
         responses: [
             new OA\Response(
@@ -411,7 +424,8 @@ class DeployController extends Controller
                             items: new OA\Items(ref: '#/components/schemas/Application'),
                         )
                     ),
-                ]),
+                ]
+            ),
             new OA\Response(
                 response: 401,
                 ref: '#/components/responses/401',
@@ -432,6 +446,7 @@ class DeployController extends Controller
         $app_uuid = $request->route('uuid', null);
         $skip = $request->get('skip', 0);
         $take = $request->get('take', 10);
+        $prNumber = $request->get('prNumber', null);
 
         $teamId = getTeamIdFromToken();
         if (is_null($teamId)) {
@@ -452,7 +467,7 @@ class DeployController extends Controller
         // Check authorization to view application deployments
         $this->authorize('view', $application);
 
-        $deployments = $application->deployments($skip, $take);
+        $deployments = $application->deployments($skip, $take, $prNumber);
 
         return response()->json($deployments);
     }
