@@ -457,9 +457,6 @@ paths:
                 custom_labels:
                   type: string
                   description: 'Custom labels.'
-                custom_docker_build_options:
-                  type: string
-                  description: 'Custom docker build options.'
                 custom_docker_run_options:
                   type: string
                   description: 'Custom docker run options.'
@@ -726,9 +723,6 @@ paths:
                 custom_labels:
                   type: string
                   description: 'Custom labels.'
-                custom_docker_build_options:
-                  type: string
-                  description: 'Custom docker build options.'
                 custom_docker_run_options:
                   type: string
                   description: 'Custom docker run options.'
@@ -963,9 +957,6 @@ paths:
                 custom_labels:
                   type: string
                   description: 'Custom labels.'
-                custom_docker_build_options:
-                  type: string
-                  description: 'Custom docker build options.'
                 custom_docker_run_options:
                   type: string
                   description: 'Custom docker run options.'
@@ -1170,9 +1161,6 @@ paths:
                 custom_labels:
                   type: string
                   description: 'Custom labels.'
-                custom_docker_build_options:
-                  type: string
-                  description: 'Custom docker build options.'
                 custom_docker_run_options:
                   type: string
                   description: 'Custom docker run options.'
@@ -1590,9 +1578,6 @@ paths:
                 custom_labels:
                   type: string
                   description: 'Custom labels.'
-                custom_docker_build_options:
-                  type: string
-                  description: 'Custom docker build options.'
                 custom_docker_run_options:
                   type: string
                   description: 'Custom docker run options.'
@@ -1796,9 +1781,6 @@ paths:
                 is_preview:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is used in preview deployments.'
-                is_build_time:
-                  type: boolean
-                  description: 'The flag to indicate if the environment variable is used in build time.'
                 is_literal:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is a literal, nothing espaced.'
@@ -1861,9 +1843,6 @@ paths:
                 is_preview:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is used in preview deployments.'
-                is_build_time:
-                  type: boolean
-                  description: 'The flag to indicate if the environment variable is used in build time.'
                 is_literal:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is a literal, nothing espaced.'
@@ -1919,7 +1898,7 @@ paths:
               properties:
                 data:
                   type: array
-                  items: { properties: { key: { type: string, description: 'The key of the environment variable.' }, value: { type: string, description: 'The value of the environment variable.' }, is_preview: { type: boolean, description: 'The flag to indicate if the environment variable is used in preview deployments.' }, is_build_time: { type: boolean, description: 'The flag to indicate if the environment variable is used in build time.' }, is_literal: { type: boolean, description: 'The flag to indicate if the environment variable is a literal, nothing espaced.' }, is_multiline: { type: boolean, description: 'The flag to indicate if the environment variable is multiline.' }, is_shown_once: { type: boolean, description: "The flag to indicate if the environment variable's value is shown on the UI." } }, type: object }
+                  items: { properties: { key: { type: string, description: 'The key of the environment variable.' }, value: { type: string, description: 'The value of the environment variable.' }, is_preview: { type: boolean, description: 'The flag to indicate if the environment variable is used in preview deployments.' }, is_literal: { type: boolean, description: 'The flag to indicate if the environment variable is a literal, nothing espaced.' }, is_multiline: { type: boolean, description: 'The flag to indicate if the environment variable is multiline.' }, is_shown_once: { type: boolean, description: "The flag to indicate if the environment variable's value is shown on the UI." } }, type: object }
               type: object
       responses:
         '201':
@@ -4633,9 +4612,6 @@ paths:
                 is_preview:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is used in preview deployments.'
-                is_build_time:
-                  type: boolean
-                  description: 'The flag to indicate if the environment variable is used in build time.'
                 is_literal:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is a literal, nothing espaced.'
@@ -4698,9 +4674,6 @@ paths:
                 is_preview:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is used in preview deployments.'
-                is_build_time:
-                  type: boolean
-                  description: 'The flag to indicate if the environment variable is used in build time.'
                 is_literal:
                   type: boolean
                   description: 'The flag to indicate if the environment variable is a literal, nothing espaced.'
@@ -4756,7 +4729,7 @@ paths:
               properties:
                 data:
                   type: array
-                  items: { properties: { key: { type: string, description: 'The key of the environment variable.' }, value: { type: string, description: 'The value of the environment variable.' }, is_preview: { type: boolean, description: 'The flag to indicate if the environment variable is used in preview deployments.' }, is_build_time: { type: boolean, description: 'The flag to indicate if the environment variable is used in build time.' }, is_literal: { type: boolean, description: 'The flag to indicate if the environment variable is a literal, nothing espaced.' }, is_multiline: { type: boolean, description: 'The flag to indicate if the environment variable is multiline.' }, is_shown_once: { type: boolean, description: "The flag to indicate if the environment variable's value is shown on the UI." } }, type: object }
+                  items: { properties: { key: { type: string, description: 'The key of the environment variable.' }, value: { type: string, description: 'The value of the environment variable.' }, is_preview: { type: boolean, description: 'The flag to indicate if the environment variable is used in preview deployments.' }, is_literal: { type: boolean, description: 'The flag to indicate if the environment variable is a literal, nothing espaced.' }, is_multiline: { type: boolean, description: 'The flag to indicate if the environment variable is multiline.' }, is_shown_once: { type: boolean, description: "The flag to indicate if the environment variable's value is shown on the UI." } }, type: object }
               type: object
       responses:
         '201':
@@ -5439,13 +5412,13 @@ components:
           type: string
         resourceable_id:
           type: integer
-        is_build_time:
-          type: boolean
         is_literal:
           type: boolean
         is_multiline:
           type: boolean
         is_preview:
+          type: boolean
+        is_buildtime_only:
           type: boolean
         is_shared:
           type: boolean
