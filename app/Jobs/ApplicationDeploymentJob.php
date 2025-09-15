@@ -2037,9 +2037,9 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             } else {
                 $volume_name = $persistentStorage->name;
             }
-            if ($this->pull_request_id !== 0) {
-                $volume_name = addPreviewDeploymentSuffix($volume_name, $this->pull_request_id);
-            }
+            // if ($this->pull_request_id !== 0) {
+            //     $volume_name = addPreviewDeploymentSuffix($volume_name, $this->pull_request_id);
+            // }
             $local_persistent_volumes[] = $volume_name.':'.$persistentStorage->mount_path;
         }
 
