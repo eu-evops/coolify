@@ -36,7 +36,6 @@ use Spatie\Url\Url;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
 use Visus\Cuid2\Cuid2;
-use Yosymfony\Toml\Toml;
 
 class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 {
@@ -1787,7 +1786,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             if ($this->nixpacks_plan) {
                 $this->application_deployment_queue->addLogEntry("Found application type: {$this->nixpacks_type}.");
                 $this->application_deployment_queue->addLogEntry("If you need further customization, please check the documentation of Nixpacks: https://nixpacks.com/docs/providers/{$this->nixpacks_type}");
-                $parsed = Toml::Parse($this->nixpacks_plan);
+                $parsed = json_decode($this->nixpacks_plan, true);
 
                 // Do any modifications here
                 // We need to generate envs here because nixpacks need to know to generate a proper Dockerfile
@@ -1831,7 +1830,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
     private function nixpacks_build_cmd()
     {
         $this->generate_nixpacks_env_variables();
-        $nixpacks_command = "nixpacks plan -f toml {$this->env_nixpacks_args}";
+        $nixpacks_command = "nixpacks plan -f json {$this->env_nixpacks_args}";
         if ($this->application->build_command) {
             $nixpacks_command .= " --build-cmd \"{$this->application->build_command}\"";
         }
@@ -2920,6 +2919,17 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                         $dockerfile->splice(1, 0, ["ARG {$env->key}={$env->real_value}"]);
                     }
                 }
+                // Add Coolify variables as ARGs
+                if ($this->coolify_variables) {
+                    $coolify_vars = collect(explode(' ', trim($this->coolify_variables)))
+                        ->filter()
+                        ->map(function ($var) {
+                            return "ARG {$var}";
+                        });
+                    foreach ($coolify_vars as $arg) {
+                        $dockerfile->splice(1, 0, [$arg]);
+                    }
+                }
             } else {
                 // Only add preview environment variables that are available during build
                 $envs = $this->application->environment_variables_preview()
@@ -2931,6 +2941,17 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                         $dockerfile->splice(1, 0, ["ARG {$env->key}"]);
                     } else {
                         $dockerfile->splice(1, 0, ["ARG {$env->key}={$env->real_value}"]);
+                    }
+                }
+                // Add Coolify variables as ARGs
+                if ($this->coolify_variables) {
+                    $coolify_vars = collect(explode(' ', trim($this->coolify_variables)))
+                        ->filter()
+                        ->map(function ($var) {
+                            return "ARG {$var}";
+                        });
+                    foreach ($coolify_vars as $arg) {
+                        $dockerfile->splice(1, 0, [$arg]);
                     }
                 }
             }
@@ -2973,7 +2994,6 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         $variables = $this->pull_request_id === 0
             ? $this->application->environment_variables()->where('key', 'not like', 'NIXPACKS_%')->where('is_buildtime', true)->get()
             : $this->application->environment_variables_preview()->where('key', 'not like', 'NIXPACKS_%')->where('is_buildtime', true)->get();
-
         if ($variables->isEmpty()) {
             return;
         }
