@@ -36,22 +36,23 @@ class ApplicationPullRequestUpdateJob implements ShouldBeEncrypted, ShouldQueue
                 return;
             }
 
-            $this->body = "## {$this->application->name} - preview deployment\n\n";
+            $serviceName = $this->application->name;
+
             if ($this->status === ProcessStatus::CLOSED) {
                 $this->delete_comment();
 
                 return;
-            } elseif ($this->status === ProcessStatus::IN_PROGRESS) {
-                $this->body .= "The preview deployment is in progress. 🟡\n\n";
-            } elseif ($this->status === ProcessStatus::FINISHED) {
-                $this->body .= "The preview deployment is ready. 🟢\n\n";
-                if ($this->preview->fqdn) {
-                    $this->body .= "[Open Preview]({$this->preview->fqdn}) | ";
-                }
-            } elseif ($this->status === ProcessStatus::ERROR) {
-                $this->body .= "The preview deployment failed. 🔴\n\n";
             }
 
+            match ($this->status) {
+                ProcessStatus::QUEUED => $this->body = "The preview deployment for **{$serviceName}** is queued. ⏳\n\n",
+                ProcessStatus::IN_PROGRESS => $this->body = "The preview deployment for **{$serviceName}** is in progress. 🟡\n\n",
+                ProcessStatus::FINISHED => $this->body = "The preview deployment for **{$serviceName}** is ready. 🟢\n\n".($this->preview->fqdn ? "[Open Preview]({$this->preview->fqdn}) | " : ''),
+                ProcessStatus::ERROR => $this->body = "The preview deployment for **{$serviceName}** failed. 🔴\n\n",
+                ProcessStatus::KILLED => $this->body = "The preview deployment for **{$serviceName}** was killed. ⚫\n\n",
+                ProcessStatus::CANCELLED => $this->body = "The preview deployment for **{$serviceName}** was cancelled. 🚫\n\n",
+                ProcessStatus::CLOSED => '', // Already handled above, but included for completeness
+            };
             $this->build_logs_url = base_url()."/project/{$this->application->environment->project->uuid}/environment/{$this->application->environment->uuid}/application/{$this->application->uuid}/deployment/{$this->deployment_uuid}";
 
             $this->body .= '[Open Build Logs]('.$this->build_logs_url.")\n\n\n";
