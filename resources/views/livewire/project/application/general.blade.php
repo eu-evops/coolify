@@ -314,7 +314,7 @@
                                 <x-forms.input
                                     helper="You can add custom docker build options that will be used when building your container.<br><br>Supports interpolation with: <span class='text-helper'>&#123;&#123;git_branch&#125;&#125;</span>, <span class='text-helper'>&#123;&#123;git_commit_sha&#125;&#125;</span>, <span class='text-helper'>&#123;&#123;application_uuid&#125;&#125;</span>, <span class='text-helper'>&#123;&#123;application_name&#125;&#125;</span>"
                                     placeholder="--cache-to=type=registry,dest=&#123;&#123;application_name&#125;&#125;:&#123;&#123;git_branch&#125;&#125;"
-                                    id="application.custom_docker_build_options" label="Custom Docker Build Options"
+                                    id="customDockerBuildOptions" label="Custom Docker Build Options"
                                     x-bind:disabled="!canUpdate" />
 
                                 <x-forms.input

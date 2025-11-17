@@ -102,6 +102,9 @@ class General extends Component
     public ?string $dockerComposeCustomBuildCommand = null;
 
     #[Validate(['string', 'nullable'])]
+    public ?string $customDockerBuildOptions = null;
+
+    #[Validate(['string', 'nullable'])]
     public ?string $customDockerRunOptions = null;
 
     #[Validate(['string', 'nullable'])]
@@ -288,7 +291,7 @@ class General extends Component
         'dockerComposeRaw' => 'Docker compose raw',
         'customLabels' => 'Custom labels',
         'dockerfileTargetBuild' => 'Dockerfile target build',
-        'application.custom_docker_build_options' => 'Custom docker build options',
+        'customDockerBuildOptions' => 'Custom docker build options',
         'customDockerRunOptions' => 'Custom docker run options',
         'customNetworkAliases' => 'Custom docker network aliases',
         'dockerComposeCustomStartCommand' => 'Docker compose custom start command',
@@ -408,6 +411,7 @@ class General extends Component
             $this->application->custom_labels = is_null($this->customLabels)
                 ? null
                 : base64_encode($this->customLabels);
+            $this->application->custom_docker_build_options = $this->customDockerBuildOptions;
             $this->application->custom_docker_run_options = $this->customDockerRunOptions;
             $this->application->pre_deployment_command = $this->preDeploymentCommand;
             $this->application->pre_deployment_command_container = $this->preDeploymentCommandContainer;
@@ -458,6 +462,7 @@ class General extends Component
             $this->dockerComposeCustomStartCommand = $this->application->docker_compose_custom_start_command;
             $this->dockerComposeCustomBuildCommand = $this->application->docker_compose_custom_build_command;
             $this->customLabels = $this->application->parseContainerLabels();
+            $this->customDockerBuildOptions = $this->application->custom_docker_build_options;
             $this->customDockerRunOptions = $this->application->custom_docker_run_options;
             $this->preDeploymentCommand = $this->application->pre_deployment_command;
             $this->preDeploymentCommandContainer = $this->application->pre_deployment_command_container;
@@ -862,10 +867,16 @@ class General extends Component
                 ]);
             }
 
+            if ($this->customDockerBuildOptions) {
+                $this->customDockerBuildOptions = str($this->customDockerBuildOptions)->trim()->toString();
+                $this->application->custom_docker_build_options = $this->customDockerBuildOptions;
+            }
+
             if ($this->customDockerRunOptions) {
                 $this->customDockerRunOptions = str($this->customDockerRunOptions)->trim()->toString();
                 $this->application->custom_docker_run_options = $this->customDockerRunOptions;
             }
+
             if ($this->dockerfile) {
                 $port = get_port_from_dockerfile($this->dockerfile);
                 if ($port && ! $this->portsExposes) {

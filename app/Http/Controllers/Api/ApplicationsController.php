@@ -319,6 +319,7 @@ class ApplicationsController extends Controller
                             'limits_cpuset' => ['type' => 'string', 'nullable' => true, 'description' => 'CPU set.'],
                             'limits_cpu_shares' => ['type' => 'integer', 'description' => 'CPU shares.'],
                             'custom_labels' => ['type' => 'string', 'description' => 'Custom labels.'],
+                            'custom_docker_build_options' => ['type' => 'string', 'description' => 'Custom docker build options.'],
                             'custom_docker_run_options' => ['type' => 'string', 'description' => 'Custom docker run options.'],
                             'post_deployment_command' => ['type' => 'string', 'description' => 'Post deployment command.'],
                             'post_deployment_command_container' => ['type' => 'string', 'description' => 'Post deployment command container.'],
@@ -469,6 +470,7 @@ class ApplicationsController extends Controller
                             'limits_cpuset' => ['type' => 'string', 'nullable' => true, 'description' => 'CPU set.'],
                             'limits_cpu_shares' => ['type' => 'integer', 'description' => 'CPU shares.'],
                             'custom_labels' => ['type' => 'string', 'description' => 'Custom labels.'],
+                            'custom_docker_build_options' => ['type' => 'string', 'description' => 'Custom docker build options.'],
                             'custom_docker_run_options' => ['type' => 'string', 'description' => 'Custom docker run options.'],
                             'post_deployment_command' => ['type' => 'string', 'description' => 'Post deployment command.'],
                             'post_deployment_command_container' => ['type' => 'string', 'description' => 'Post deployment command container.'],
@@ -610,6 +612,7 @@ class ApplicationsController extends Controller
                             'limits_cpuset' => ['type' => 'string', 'nullable' => true, 'description' => 'CPU set.'],
                             'limits_cpu_shares' => ['type' => 'integer', 'description' => 'CPU shares.'],
                             'custom_labels' => ['type' => 'string', 'description' => 'Custom labels.'],
+                            'custom_docker_build_options' => ['type' => 'string', 'description' => 'Custom docker build options.'],
                             'custom_docker_run_options' => ['type' => 'string', 'description' => 'Custom docker run options.'],
                             'post_deployment_command' => ['type' => 'string', 'description' => 'Post deployment command.'],
                             'post_deployment_command_container' => ['type' => 'string', 'description' => 'Post deployment command container.'],
@@ -741,6 +744,7 @@ class ApplicationsController extends Controller
                             'limits_cpuset' => ['type' => 'string', 'nullable' => true, 'description' => 'CPU set.'],
                             'limits_cpu_shares' => ['type' => 'integer', 'description' => 'CPU shares.'],
                             'custom_labels' => ['type' => 'string', 'description' => 'Custom labels.'],
+                            'custom_docker_build_options' => ['type' => 'string', 'description' => 'Custom docker build options.'],
                             'custom_docker_run_options' => ['type' => 'string', 'description' => 'Custom docker run options.'],
                             'post_deployment_command' => ['type' => 'string', 'description' => 'Post deployment command.'],
                             'post_deployment_command_container' => ['type' => 'string', 'description' => 'Post deployment command container.'],
@@ -928,7 +932,7 @@ class ApplicationsController extends Controller
         if ($return instanceof \Illuminate\Http\JsonResponse) {
             return $return;
         }
-        $allowedFields = ['project_uuid', 'environment_name', 'environment_uuid', 'server_uuid', 'destination_uuid', 'type', 'name', 'description', 'is_static', 'domains', 'git_repository', 'git_branch', 'git_commit_sha', 'private_key_uuid', 'docker_registry_image_name', 'docker_registry_image_tag', 'build_pack', 'install_command', 'build_command', 'start_command', 'ports_exposes', 'ports_mappings', 'base_directory', 'publish_directory', 'health_check_enabled', 'health_check_path', 'health_check_port', 'health_check_host', 'health_check_method', 'health_check_return_code', 'health_check_scheme', 'health_check_response_text', 'health_check_interval', 'health_check_timeout', 'health_check_retries', 'health_check_start_period', 'limits_memory', 'limits_memory_swap', 'limits_memory_swappiness', 'limits_memory_reservation', 'limits_cpus', 'limits_cpuset', 'limits_cpu_shares', 'custom_labels', 'custom_docker_run_options', 'post_deployment_command', 'post_deployment_command_container', 'pre_deployment_command', 'pre_deployment_command_container',  'manual_webhook_secret_github', 'manual_webhook_secret_gitlab', 'manual_webhook_secret_bitbucket', 'manual_webhook_secret_gitea', 'redirect', 'github_app_uuid', 'instant_deploy', 'dockerfile', 'docker_compose_location', 'docker_compose_raw', 'docker_compose_custom_start_command', 'docker_compose_custom_build_command', 'docker_compose_domains', 'watch_paths', 'use_build_server', 'static_image', 'custom_nginx_configuration', 'is_http_basic_auth_enabled', 'http_basic_auth_username', 'http_basic_auth_password', 'connect_to_docker_network', 'force_domain_override'];
+        $allowedFields = ['project_uuid', 'environment_name', 'environment_uuid', 'server_uuid', 'destination_uuid', 'type', 'name', 'description', 'is_static', 'domains', 'git_repository', 'git_branch', 'git_commit_sha', 'private_key_uuid', 'docker_registry_image_name', 'docker_registry_image_tag', 'build_pack', 'install_command', 'build_command', 'start_command', 'ports_exposes', 'ports_mappings', 'base_directory', 'publish_directory', 'health_check_enabled', 'health_check_path', 'health_check_port', 'health_check_host', 'health_check_method', 'health_check_return_code', 'health_check_scheme', 'health_check_response_text', 'health_check_interval', 'health_check_timeout', 'health_check_retries', 'health_check_start_period', 'limits_memory', 'limits_memory_swap', 'limits_memory_swappiness', 'limits_memory_reservation', 'limits_cpus', 'limits_cpuset', 'limits_cpu_shares', 'custom_labels', 'custom_docker_build_options', 'custom_docker_run_options', 'post_deployment_command', 'post_deployment_command_container', 'pre_deployment_command', 'pre_deployment_command_container',  'manual_webhook_secret_github', 'manual_webhook_secret_gitlab', 'manual_webhook_secret_bitbucket', 'manual_webhook_secret_gitea', 'redirect', 'github_app_uuid', 'instant_deploy', 'dockerfile', 'docker_compose_location', 'docker_compose_raw', 'docker_compose_custom_start_command', 'docker_compose_custom_build_command', 'docker_compose_domains', 'watch_paths', 'use_build_server', 'static_image', 'custom_nginx_configuration', 'is_http_basic_auth_enabled', 'http_basic_auth_username', 'http_basic_auth_password', 'connect_to_docker_network', 'force_domain_override'];
 
         $validator = customApiValidator($request->all(), [
             'name' => 'string|max:255',
@@ -2107,6 +2111,7 @@ class ApplicationsController extends Controller
                             'limits_cpuset' => ['type' => 'string', 'nullable' => true, 'description' => 'CPU set.'],
                             'limits_cpu_shares' => ['type' => 'integer', 'description' => 'CPU shares.'],
                             'custom_labels' => ['type' => 'string', 'description' => 'Custom labels.'],
+                            'custom_docker_build_options' => ['type' => 'string', 'description' => 'Custom docker build options.'],
                             'custom_docker_run_options' => ['type' => 'string', 'description' => 'Custom docker run options.'],
                             'post_deployment_command' => ['type' => 'string', 'description' => 'Post deployment command.'],
                             'post_deployment_command_container' => ['type' => 'string', 'description' => 'Post deployment command container.'],
@@ -2213,7 +2218,7 @@ class ApplicationsController extends Controller
         $this->authorize('update', $application);
 
         $server = $application->destination->server;
-        $allowedFields = ['name', 'description', 'is_static', 'domains', 'git_repository', 'git_branch', 'git_commit_sha', 'docker_registry_image_name', 'docker_registry_image_tag', 'build_pack', 'static_image', 'install_command', 'build_command', 'start_command', 'ports_exposes', 'ports_mappings', 'base_directory', 'publish_directory', 'health_check_enabled', 'health_check_path', 'health_check_port', 'health_check_host', 'health_check_method', 'health_check_return_code', 'health_check_scheme', 'health_check_response_text', 'health_check_interval', 'health_check_timeout', 'health_check_retries', 'health_check_start_period', 'limits_memory', 'limits_memory_swap', 'limits_memory_swappiness', 'limits_memory_reservation', 'limits_cpus', 'limits_cpuset', 'limits_cpu_shares', 'custom_labels', 'custom_docker_run_options', 'post_deployment_command', 'post_deployment_command_container', 'pre_deployment_command', 'pre_deployment_command_container', 'watch_paths', 'manual_webhook_secret_github', 'manual_webhook_secret_gitlab', 'manual_webhook_secret_bitbucket', 'manual_webhook_secret_gitea', 'docker_compose_location', 'docker_compose_raw', 'docker_compose_custom_start_command', 'docker_compose_custom_build_command', 'docker_compose_domains', 'redirect', 'instant_deploy', 'use_build_server', 'custom_nginx_configuration', 'is_http_basic_auth_enabled', 'http_basic_auth_username', 'http_basic_auth_password', 'connect_to_docker_network', 'force_domain_override'];
+        $allowedFields = ['name', 'description', 'is_static', 'domains', 'git_repository', 'git_branch', 'git_commit_sha', 'docker_registry_image_name', 'docker_registry_image_tag', 'build_pack', 'static_image', 'install_command', 'build_command', 'start_command', 'ports_exposes', 'ports_mappings', 'base_directory', 'publish_directory', 'health_check_enabled', 'health_check_path', 'health_check_port', 'health_check_host', 'health_check_method', 'health_check_return_code', 'health_check_scheme', 'health_check_response_text', 'health_check_interval', 'health_check_timeout', 'health_check_retries', 'health_check_start_period', 'limits_memory', 'limits_memory_swap', 'limits_memory_swappiness', 'limits_memory_reservation', 'limits_cpus', 'limits_cpuset', 'limits_cpu_shares', 'custom_labels', 'custom_docker_build_options', 'custom_docker_run_options', 'post_deployment_command', 'post_deployment_command_container', 'pre_deployment_command', 'pre_deployment_command_container', 'watch_paths', 'manual_webhook_secret_github', 'manual_webhook_secret_gitlab', 'manual_webhook_secret_bitbucket', 'manual_webhook_secret_gitea', 'docker_compose_location', 'docker_compose_raw', 'docker_compose_custom_start_command', 'docker_compose_custom_build_command', 'docker_compose_domains', 'redirect', 'instant_deploy', 'use_build_server', 'custom_nginx_configuration', 'is_http_basic_auth_enabled', 'http_basic_auth_username', 'http_basic_auth_password', 'connect_to_docker_network', 'force_domain_override'];
 
         $validationRules = [
             'name' => 'string|max:255',

@@ -2875,9 +2875,6 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
 
             $build_command = $this->wrap_build_command_with_env_export("docker build {$this->addHosts} --network host -f {$this->workdir}/Dockerfile {$this->build_args} --progress plain -t {$this->production_image_name} {$this->interpolated_docker_build_options} {$this->workdir}");
             $base64_build_command = base64_encode($build_command);
-            transfer_file_to_container(base64_decode($dockerfile), "{$this->workdir}/Dockerfile", $this->deployment_uuid, $this->server);
-            transfer_file_to_container(base64_decode($nginx_config), "{$this->workdir}/nginx.conf", $this->deployment_uuid, $this->server);
-            transfer_file_to_container(base64_decode($base64_build_command), '/artifacts/build.sh', $this->deployment_uuid, $this->server);
 
             $this->execute_remote_command(
                 [
@@ -2920,7 +2917,6 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                     }
                 }
                 $base64_build_command = base64_encode($build_command);
-                transfer_file_to_container(base64_decode($base64_build_command), '/artifacts/build.sh', $this->deployment_uuid, $this->server);
                 $this->execute_remote_command(
                     [
                         executeInDocker($this->deployment_uuid, "echo '{$base64_build_command}' | base64 -d | tee /artifacts/build.sh > /dev/null"),
@@ -2983,7 +2979,6 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                         }
                     }
                     $base64_build_command = base64_encode($build_command);
-                    transfer_file_to_container(base64_decode($base64_build_command), '/artifacts/build.sh', $this->deployment_uuid, $this->server);
                     $this->execute_remote_command(
                         [
                             executeInDocker($this->deployment_uuid, "echo '{$base64_build_command}' | base64 -d | tee /artifacts/build.sh > /dev/null"),
@@ -3405,7 +3400,8 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                     executeInDocker($this->deployment_uuid, "cat {$this->workdir}{$this->dockerfile_location}"),
                     'hidden' => true,
                     'ignore_errors' => true,
-                ]);
+                ]
+            );
         }
     }
 
