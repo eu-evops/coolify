@@ -1,0 +1,3 @@
+[submodule ".platformshape/scripts"]
+	path = .platformshape/scripts
+	url = https://github.com/platformshape/coolify-scripts
