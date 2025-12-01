@@ -962,6 +962,7 @@ function convertDockerRunToCompose(?string $custom_docker_run_options = null)
         '--shm-size' => 'shm_size',
         '--gpus' => 'gpus',
         '--hostname' => 'hostname',
+        '--entrypoint' => 'entrypoint',
     ]);
     foreach ($matches as $match) {
         $option = $match[1];
@@ -981,6 +982,38 @@ function convertDockerRunToCompose(?string $custom_docker_run_options = null)
                 $options[$option][] = $value;
                 $options[$option] = array_unique($options[$option]);
             }
+        }
+        if ($option === '--entrypoint') {
+            $value = null;
+            // Match --entrypoint=value or --entrypoint value
+            // Handle quoted strings with escaped quotes: --entrypoint "python -c \"print('hi')\""
+            // Pattern matches: double-quoted (with escapes), single-quoted (with escapes), or unquoted values
+            if (preg_match(
+                '/--entrypoint(?:=|\s+)(?<raw>"(?:\\\\.|[^"])*"|\'(?:\\\\.|[^\'])*\'|[^\s]+)/',
+                $custom_docker_run_options,
+                $entrypoint_matches
+            )) {
+                $rawValue = $entrypoint_matches['raw'];
+                // Handle double-quoted strings: strip quotes and unescape special characters
+                if (str_starts_with($rawValue, '"') && str_ends_with($rawValue, '"')) {
+                    $inner = substr($rawValue, 1, -1);
+                    // Unescape backslash sequences: \" \$ \` \\
+                    $value = preg_replace('/\\\\(["$`\\\\])/', '$1', $inner);
+                } elseif (str_starts_with($rawValue, "'") && str_ends_with($rawValue, "'")) {
+                    // Handle single-quoted strings: just strip quotes (no unescaping per shell rules)
+                    $value = substr($rawValue, 1, -1);
+                } else {
+                    // Handle unquoted values
+                    $value = $rawValue;
+                }
+            }
+
+            if ($value && trim($value) !== '') {
+                $options[$option][] = $value;
+                $options[$option] = array_values(array_unique($options[$option]));
+            }
+
+            continue;
         }
         if (isset($match[2]) && $match[2] !== '') {
             $value = $match[2];
@@ -1020,6 +1053,12 @@ function convertDockerRunToCompose(?string $custom_docker_run_options = null)
             $compose_options->put($mapping[$option], $ulimits);
         } elseif ($option === '--shm-size' || $option === '--hostname') {
             if (! is_null($value) && is_array($value) && count($value) > 0 && ! empty(trim($value[0]))) {
+                $compose_options->put($mapping[$option], $value[0]);
+            }
+        } elseif ($option === '--entrypoint') {
+            if (! is_null($value) && is_array($value) && count($value) > 0 && ! empty(trim($value[0]))) {
+                // Docker compose accepts entrypoint as either a string or an array
+                // Keep it as a string for simplicity - docker compose will handle it
                 $compose_options->put($mapping[$option], $value[0]);
             }
         } elseif ($option === '--gpus') {
@@ -1083,6 +1122,44 @@ function generateCustomDockerRunOptionsForDatabases($docker_run_options, $docker
     return $docker_compose;
 }
 
+/**
+ * Remove Coolify's custom Docker Compose fields from parsed YAML array
+ *
+ * Coolify extends Docker Compose with custom fields that are processed during
+ * parsing and deployment but must be removed before sending to Docker.
+ *
+ * Custom fields:
+ * - exclude_from_hc (service-level): Exclude service from health check monitoring
+ * - content (volume-level): Auto-create file with specified content during init
+ * - isDirectory / is_directory (volume-level): Mark bind mount as directory
+ *
+ * @param  array  $yamlCompose  Parsed Docker Compose array
+ * @return array Cleaned Docker Compose array with custom fields removed
+ */
+function stripCoolifyCustomFields(array $yamlCompose): array
+{
+    foreach ($yamlCompose['services'] ?? [] as $serviceName => $service) {
+        // Remove service-level custom fields
+        unset($yamlCompose['services'][$serviceName]['exclude_from_hc']);
+
+        // Remove volume-level custom fields (only for long syntax - arrays)
+        if (isset($service['volumes'])) {
+            foreach ($service['volumes'] as $volumeName => $volume) {
+                // Skip if volume is string (short syntax like 'db-data:/var/lib/postgresql/data')
+                if (! is_array($volume)) {
+                    continue;
+                }
+
+                unset($yamlCompose['services'][$serviceName]['volumes'][$volumeName]['content']);
+                unset($yamlCompose['services'][$serviceName]['volumes'][$volumeName]['isDirectory']);
+                unset($yamlCompose['services'][$serviceName]['volumes'][$volumeName]['is_directory']);
+            }
+        }
+    }
+
+    return $yamlCompose;
+}
+
 function validateComposeFile(string $compose, int $server_id): string|Throwable
 {
     $uuid = Str::random(18);
@@ -1092,16 +1169,10 @@ function validateComposeFile(string $compose, int $server_id): string|Throwable
             throw new \Exception('Server not found');
         }
         $yaml_compose = Yaml::parse($compose);
-        foreach ($yaml_compose['services'] as $service_name => $service) {
-            if (! isset($service['volumes'])) {
-                continue;
-            }
-            foreach ($service['volumes'] as $volume_name => $volume) {
-                if (data_get($volume, 'type') === 'bind' && data_get($volume, 'content')) {
-                    unset($yaml_compose['services'][$service_name]['volumes'][$volume_name]['content']);
-                }
-            }
-        }
+
+        // Remove Coolify's custom fields before Docker validation
+        $yaml_compose = stripCoolifyCustomFields($yaml_compose);
+
         $base64_compose = base64_encode(Yaml::dump($yaml_compose));
         instant_remote_process([
             "echo {$base64_compose} | base64 -d | tee /tmp/{$uuid}.yml > /dev/null",
@@ -1271,4 +1342,96 @@ function generateDockerEnvFlags($variables): string
             return "-e {$key}={$escaped_value}";
         })
         ->implode(' ');
+}
+
+/**
+ * Auto-inject -f and --env-file flags into a docker compose command if not already present
+ *
+ * @param  string  $command  The docker compose command to modify
+ * @param  string  $composeFilePath  The path to the compose file
+ * @param  string  $envFilePath  The path to the .env file
+ * @return string The modified command with injected flags
+ *
+ * @example
+ * Input:  "docker compose build"
+ * Output: "docker compose -f ./docker-compose.yml --env-file .env build"
+ */
+function injectDockerComposeFlags(string $command, string $composeFilePath, string $envFilePath): string
+{
+    $dockerComposeReplacement = 'docker compose';
+
+    // Add -f flag if not present (checks for both -f and --file with various formats)
+    // Detects: -f path, -f=path, -fpath (concatenated with path chars: . / ~), --file path, --file=path
+    // Note: Uses [.~/]|$ instead of \S to prevent false positives with flags like -foo, -from, -feature
+    if (! preg_match('/(?:^|\s)(?:-f(?:[=\s]|[.\/~]|$)|--file(?:=|\s))/', $command)) {
+        $dockerComposeReplacement .= " -f {$composeFilePath}";
+    }
+
+    // Add --env-file flag if not present (checks for --env-file with various formats)
+    // Detects: --env-file path, --env-file=path with any whitespace
+    if (! preg_match('/(?:^|\s)--env-file(?:=|\s)/', $command)) {
+        $dockerComposeReplacement .= " --env-file {$envFilePath}";
+    }
+
+    // Replace only first occurrence to avoid modifying comments/strings/chained commands
+    return preg_replace('/docker\s+compose/', $dockerComposeReplacement, $command, 1);
+}
+
+/**
+ * Inject build arguments right after build-related subcommands in docker/docker compose commands.
+ * This ensures build args are only applied to build operations, not to push, pull, up, etc.
+ *
+ * Supports:
+ * - docker compose build
+ * - docker buildx build
+ * - docker builder build
+ * - docker build (legacy)
+ *
+ * Examples:
+ * - Input:  "docker compose -f file.yml build"
+ *   Output: "docker compose -f file.yml build --build-arg X --build-arg Y"
+ *
+ * - Input:  "docker buildx build --platform linux/amd64"
+ *   Output: "docker buildx build --build-arg X --build-arg Y --platform linux/amd64"
+ *
+ * - Input:  "docker builder build --tag myimage:latest"
+ *   Output: "docker builder build --build-arg X --build-arg Y --tag myimage:latest"
+ *
+ * - Input:  "docker compose build && docker compose push"
+ *   Output: "docker compose build --build-arg X --build-arg Y && docker compose push"
+ *
+ * - Input:  "docker compose push"
+ *   Output: "docker compose push" (unchanged - no build command found)
+ *
+ * @param  string  $command  The docker command
+ * @param  string  $buildArgsString  The build arguments to inject (e.g., "--build-arg X --build-arg Y")
+ * @return string The modified command with build args injected after build subcommand
+ */
+function injectDockerComposeBuildArgs(string $command, string $buildArgsString): string
+{
+    // Early return if no build args to inject
+    if (empty(trim($buildArgsString))) {
+        return $command;
+    }
+
+    // Match build-related commands:
+    // - ' builder build' (docker builder build)
+    // - ' buildx build' (docker buildx build)
+    // - ' build' (docker compose build, docker build)
+    // Followed by either:
+    // - whitespace (allowing service names, flags, or any valid arguments)
+    // - end of string ($)
+    // This regex ensures we match build subcommands, not "build" in other contexts
+    // IMPORTANT: Order matters - check longer patterns first (builder build, buildx build) before ' build'
+    $pattern = '/( builder build| buildx build| build)(?=\s|$)/';
+
+    // Replace the first occurrence of build command with build command + build-args
+    $modifiedCommand = preg_replace(
+        $pattern,
+        '$1 '.$buildArgsString,
+        $command,
+        1  // Only replace first occurrence
+    );
+
+    return $modifiedCommand ?? $command;
 }

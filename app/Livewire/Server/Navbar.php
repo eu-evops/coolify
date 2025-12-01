@@ -5,10 +5,12 @@ namespace App\Livewire\Server;
 use App\Actions\Proxy\CheckProxy;
 use App\Actions\Proxy\StartProxy;
 use App\Actions\Proxy\StopProxy;
-use App\Jobs\RestartProxyJob;
+use App\Enums\ProxyTypes;
+use App\Jobs\CheckTraefikVersionForServerJob;
 use App\Models\Server;
 use App\Services\ProxyDashboardCacheService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Navbar extends Component
@@ -61,7 +63,26 @@ class Navbar extends Component
     {
         try {
             $this->authorize('manageProxy', $this->server);
-            RestartProxyJob::dispatch($this->server);
+            StopProxy::run($this->server, restarting: true);
+
+            $this->server->proxy->force_stop = false;
+            $this->server->save();
+
+            $activity = StartProxy::run($this->server, force: true, restarting: true);
+            $this->dispatch('activityMonitor', $activity->id);
+
+            // Check Traefik version after restart to provide immediate feedback
+            if ($this->server->proxyType() === ProxyTypes::TRAEFIK->value) {
+                $traefikVersions = get_traefik_versions();
+                if ($traefikVersions !== null) {
+                    CheckTraefikVersionForServerJob::dispatch($this->server, $traefikVersions);
+                } else {
+                    Log::warning('Traefik version check skipped: versions.json data unavailable', [
+                        'server_id' => $this->server->id,
+                        'server_name' => $this->server->name,
+                    ]);
+                }
+            }
         } catch (\Throwable $e) {
             return handleError($e, $this);
         }
@@ -118,19 +139,25 @@ class Navbar extends Component
 
     public function showNotification()
     {
+        $previousStatus = $this->proxyStatus;
         $this->server->refresh();
         $this->proxyStatus = $this->server->proxy->status ?? 'unknown';
 
         switch ($this->proxyStatus) {
             case 'running':
                 $this->loadProxyConfiguration();
-                $this->dispatch('success', 'Proxy is running.');
-                break;
-            case 'restarting':
-                $this->dispatch('info', 'Initiating proxy restart.');
+                // Only show "Proxy is running" notification when transitioning from a stopped/error state
+                // Don't show during normal start/restart flows (starting, restarting, stopping)
+                if (in_array($previousStatus, ['exited', 'stopped', 'unknown', null])) {
+                    $this->dispatch('success', 'Proxy is running.');
+                }
                 break;
             case 'exited':
-                $this->dispatch('info', 'Proxy has exited.');
+                // Only show "Proxy has exited" notification when transitioning from running state
+                // Don't show during normal stop/restart flows (stopping, restarting)
+                if (in_array($previousStatus, ['running'])) {
+                    $this->dispatch('info', 'Proxy has exited.');
+                }
                 break;
             case 'stopping':
                 $this->dispatch('info', 'Proxy is stopping.');
@@ -152,6 +179,22 @@ class Navbar extends Component
     {
         $this->server->refresh();
         $this->server->load('settings');
+    }
+
+    /**
+     * Check if Traefik has any outdated version info (patch or minor upgrade).
+     * This shows a warning indicator in the navbar.
+     */
+    public function getHasTraefikOutdatedProperty(): bool
+    {
+        if ($this->server->proxyType() !== ProxyTypes::TRAEFIK->value) {
+            return false;
+        }
+
+        // Check if server has outdated info stored
+        $outdatedInfo = $this->server->traefik_outdated_info;
+
+        return ! empty($outdatedInfo) && isset($outdatedInfo['type']);
     }
 
     public function render()
