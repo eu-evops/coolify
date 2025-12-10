@@ -179,4 +179,5 @@ function removeUnnecessaryFieldsFromRequest(Request $request)
     $request->offsetUnset('use_build_server');
     $request->offsetUnset('is_static');
     $request->offsetUnset('force_domain_override');
+    $request->offsetUnset('autogenerate_domain');
 }
