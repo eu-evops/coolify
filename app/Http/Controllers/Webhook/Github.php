@@ -113,7 +113,9 @@ class Github extends Controller
                                     commit: data_get($payload, 'after', 'HEAD'),
                                     is_webhook: true,
                                 );
-                                if ($result['status'] === 'skipped') {
+                                if ($result['status'] === 'queue_full') {
+                                    return response($result['message'], 429)->header('Retry-After', 60);
+                                } elseif ($result['status'] === 'skipped') {
                                     $return_payloads->push([
                                         'application' => $application->name,
                                         'status' => 'skipped',
@@ -218,7 +220,10 @@ class Github extends Controller
                                         is_webhook: true,
                                         git_type: 'github'
                                     );
-                                    if ($result['status'] === 'skipped') {
+
+                                    if ($result['status'] === 'queue_full') {
+                                        return response($result['message'], 429)->header('Retry-After', 60);
+                                    } elseif ($result['status'] === 'skipped') {
                                         $return_payloads->push([
                                             'application' => $application->name,
                                             'status' => 'skipped',
@@ -231,6 +236,7 @@ class Github extends Controller
                                             'message' => 'Preview deployment queued.',
                                         ]);
                                     }
+
                                 } else {
                                     $paths = str($application->watch_paths)->explode("\n");
                                     $return_payloads->push([
@@ -341,7 +347,9 @@ class Github extends Controller
             if (! $id || ! $branch) {
                 return response('Nothing to do. No id or branch found.');
             }
-            $applications = Application::where('repository_project_id', $id)->whereRelation('source', 'is_public', false);
+            $applications = Application::where('repository_project_id', $id)
+                ->where('source_id', $github_app->id)
+                ->whereRelation('source', 'is_public', false);
             if ($x_github_event === 'push') {
                 $applications = $applications->where('git_branch', $branch)->get();
                 if ($applications->isEmpty()) {
@@ -383,12 +391,15 @@ class Github extends Controller
                                     force_rebuild: false,
                                     is_webhook: true,
                                 );
+                                if ($result['status'] === 'queue_full') {
+                                    return response($result['message'], 429)->header('Retry-After', 60);
+                                }
                                 $return_payloads->push([
                                     'status' => $result['status'],
                                     'message' => $result['message'],
                                     'application_uuid' => $application->uuid,
                                     'application_name' => $application->name,
-                                    'deployment_uuid' => $result['deployment_uuid'],
+                                    'deployment_uuid' => $result['deployment_uuid'] ?? null,
                                 ]);
                             } else {
                                 $paths = str($application->watch_paths)->explode("\n");
@@ -467,7 +478,9 @@ class Github extends Controller
                                         is_webhook: true,
                                         git_type: 'github'
                                     );
-                                    if ($result['status'] === 'skipped') {
+                                    if ($result['status'] === 'queue_full') {
+                                        return response($result['message'], 429)->header('Retry-After', 60);
+                                    } elseif ($result['status'] === 'skipped') {
                                         $return_payloads->push([
                                             'application' => $application->name,
                                             'status' => 'skipped',
@@ -480,6 +493,7 @@ class Github extends Controller
                                             'message' => 'Preview deployment queued.',
                                         ]);
                                     }
+
                                 } else {
                                     $paths = str($application->watch_paths)->explode("\n");
                                     $return_payloads->push([
