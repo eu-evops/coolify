@@ -672,6 +672,12 @@ function removeAnsiColors($text)
     return preg_replace('/\e[[][A-Za-z0-9];?[0-9]*m?/', '', $text);
 }
 
+function sanitizeLogsForExport(string $text): string
+{
+    // All sanitization is now handled by remove_iip()
+    return remove_iip($text);
+}
+
 function getTopLevelNetworks(Service|Application $resource)
 {
     if ($resource->getMorphClass() === \App\Models\Service::class) {
