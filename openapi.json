@@ -2154,8 +2154,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -2200,8 +2199,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -2292,8 +2290,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -2685,8 +2682,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -2823,8 +2819,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -2872,8 +2867,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -2961,8 +2955,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -3056,8 +3049,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -3158,8 +3150,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -3168,8 +3159,7 @@
                         "description": "UUID of the environment variable.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -3222,8 +3212,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -3308,8 +3297,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -3370,8 +3358,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -3635,8 +3622,7 @@
                         "description": "UUID of the cloud provider token.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -3844,8 +3830,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -3891,8 +3876,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -4024,8 +4008,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -4071,8 +4054,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -4163,8 +4145,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -4385,8 +4366,7 @@
                         "description": "UUID of the backup configuration to delete",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -4454,8 +4434,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -4464,8 +4443,7 @@
                         "description": "UUID of the backup configuration.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -5642,8 +5620,7 @@
                         "description": "UUID of the backup configuration",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -5652,8 +5629,7 @@
                         "description": "UUID of the backup execution to delete",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -5732,8 +5708,7 @@
                         "description": "UUID of the backup configuration",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -5802,8 +5777,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -5856,8 +5830,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -5910,8 +5883,7 @@
                         "description": "UUID of the database.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -6223,8 +6195,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -7646,8 +7617,7 @@
                         "description": "UUID of the application.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -7701,8 +7671,7 @@
                         "description": "UUID of the project.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -8539,8 +8508,7 @@
                         "description": "UUID of the server.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9250,8 +9218,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9368,8 +9335,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9417,8 +9383,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9509,8 +9474,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9607,8 +9571,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9712,8 +9675,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
@@ -9722,8 +9684,7 @@
                         "description": "UUID of the environment variable.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9776,8 +9737,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9830,8 +9790,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     }
                 ],
@@ -9884,8 +9843,7 @@
                         "description": "UUID of the service.",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "format": "uuid"
+                            "type": "string"
                         }
                     },
                     {
