@@ -3218,6 +3218,8 @@ class ApplicationsController extends Controller
                                         'is_literal' => ['type' => 'boolean', 'description' => 'The flag to indicate if the environment variable is a literal, nothing espaced.'],
                                         'is_multiline' => ['type' => 'boolean', 'description' => 'The flag to indicate if the environment variable is multiline.'],
                                         'is_shown_once' => ['type' => 'boolean', 'description' => 'The flag to indicate if the environment variable\'s value is shown on the UI.'],
+                                        'is_runtime' => ['type' => 'boolean', 'description' => 'The flag to indicate if the environment variable is available at buildtime.'],
+                                        'is_buildtime' => ['type' => 'boolean', 'description' => 'The flag to indicate if the environment variable is available at runtime.'],
                                     ],
                                 ),
                             ],
