@@ -3447,11 +3447,12 @@
                         }
                     },
                     {
-                        "name": "pull_request_id",
+                        "name": "docker_cleanup",
                         "in": "query",
-                        "description": "Pull request ID to deploy.",
+                        "description": "Perform docker cleanup (prune networks, volumes, etc.).",
                         "schema": {
-                            "type": "int32"
+                            "type": "boolean",
+                            "default": true
                         }
                     }
                 ],
@@ -5977,6 +5978,15 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "docker_cleanup",
+                        "in": "query",
+                        "description": "Perform docker cleanup (prune networks, volumes, etc.).",
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
                         }
                     }
                 ],
@@ -10684,6 +10694,15 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "docker_cleanup",
+                        "in": "query",
+                        "description": "Perform docker cleanup (prune networks, volumes, etc.).",
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
                         }
                     }
                 ],

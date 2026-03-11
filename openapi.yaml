@@ -2186,13 +2186,13 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
         -
-          name: pull_request_id
+          name: docker_cleanup
           in: query
-          description: 'Pull request ID to deploy.'
+          description: 'Perform docker cleanup (prune networks, volumes, etc.).'
           schema:
-            type: int32
+            type: boolean
+            default: true
       responses:
         '200':
           description: 'Stop application.'
@@ -3888,6 +3888,13 @@ paths:
           required: true
           schema:
             type: string
+        -
+          name: docker_cleanup
+          in: query
+          description: 'Perform docker cleanup (prune networks, volumes, etc.).'
+          schema:
+            type: boolean
+            default: true
       responses:
         '200':
           description: 'Stop database.'
@@ -6735,6 +6742,13 @@ paths:
           required: true
           schema:
             type: string
+        -
+          name: docker_cleanup
+          in: query
+          description: 'Perform docker cleanup (prune networks, volumes, etc.).'
+          schema:
+            type: boolean
+            default: true
       responses:
         '200':
           description: 'Stop service.'
