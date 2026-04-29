@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Application;
+use App\Models\ApplicationSetting;
+
 /**
- * Security tests for git ref validation (GHSA-mw5w-2vvh-mgf4).
+ * Tests for git ref validation.
  *
  * Ensures that git_commit_sha and related inputs are validated
  * to prevent OS command injection via shell metacharacters.
@@ -103,14 +106,14 @@ describe('executeInDocker git log escaping', function () {
 
 describe('buildGitCheckoutCommand escaping', function () {
     test('checkout command escapes target to prevent injection', function () {
-        $app = new \App\Models\Application;
-        $app->forceFill(['uuid' => 'test-uuid']);
+        $app = new Application;
+        $app->fill(['uuid' => 'test-uuid']);
 
-        $settings = new \App\Models\ApplicationSetting;
+        $settings = new ApplicationSetting;
         $settings->is_git_submodules_enabled = false;
         $app->setRelation('settings', $settings);
 
-        $method = new \ReflectionMethod($app, 'buildGitCheckoutCommand');
+        $method = new ReflectionMethod($app, 'buildGitCheckoutCommand');
 
         $result = $method->invoke($app, 'abc123');
         expect($result)->toContain("git checkout 'abc123'");
